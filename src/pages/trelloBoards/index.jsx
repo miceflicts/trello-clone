@@ -18,7 +18,6 @@ function TrelloBoardsPage() {
   }
 
   const handleCreatedNewList = (text) => {
-    console.log(text);
 
     setTodosListDict((prevList) => {
       return prevList.map(todo => {
@@ -37,6 +36,19 @@ function TrelloBoardsPage() {
 
   const handleCanceledCreatingNewList = (id) => {
     setTodosListDict((prevTodos) => prevTodos.filter(todo => todo.id !== id));
+    console.log(id)
+  }
+
+  const handleHasCopiedList = (id) => {
+    console.log("going")
+
+      todosListDict.map(todo => {
+        if (todo.id === id) {
+          let todoTitle = todo.todoTitle;
+          
+          setTodosListDict([...todosListDict, {todoTitle: todoTitle, id:todosListDict.length, isBeingCreated: false}])
+        };
+      })
   }
 
   useEffect(() => {
@@ -62,7 +74,7 @@ function TrelloBoardsPage() {
         <div className=' flex flex-row pt-[56px]'>
 
           {todosListDict.map((todosList, index) => {
-            return <TodosBoard key={index} id={index} todoTitle={todosList.todoTitle} isBeingCreated={todosList.isBeingCreated} createdNewList={handleCreatedNewList} canceledCreatingNewList={handleCanceledCreatingNewList}></TodosBoard>
+            return <TodosBoard key={index} id={todosList.id} todoTitle={todosList.todoTitle} isBeingCreated={todosList.isBeingCreated} createdNewList={handleCreatedNewList} canceledCreatingNewList={handleCanceledCreatingNewList} hasDeletedList={handleCanceledCreatingNewList} hasCopiedList={handleHasCopiedList}></TodosBoard>
           })}
 
           <AddATodo receivedAClick={handleAddATodoClick}></AddATodo>

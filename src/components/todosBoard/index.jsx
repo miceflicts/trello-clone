@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import TodosCard from '../todosCard'
 
-function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCreatingNewList}) {
+function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCreatingNewList, hasDeletedList, hasCopiedList}) {
     const [todosListDict, setTodosListDict] = useState([]);
     const [isATodoBeingCreated, setIsATodoBeingCreated] = useState(false)
     const [newListTitle, setNewListTitle] = useState("")
@@ -55,6 +55,19 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
         setIsATodoBeingCreated(false);
     };
 
+    const handleExitListOptions = () => {
+      setIsClickingInListOptions(!isClickingInListOptions);
+    }
+
+    const deleteList = () => {
+      hasDeletedList(id);
+    }
+
+    const handleCopiedList = () => {
+      hasCopiedList(id)
+    }
+
+
   return (
         <>
             {isBeingCreated ? (
@@ -107,7 +120,7 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
                                 <div className=' flex flex-row w-full justify-center'>
                                   <h5 className=' mt-2 dark:text-gray-300/85 text-gray-600/90'>Lista de ações</h5>
 
-                                  <div className=' absolute top-2 right-4 w-[28px] h-[28px] flex items-center justify-center hover:bg-gray-300/90 dark:hover:bg-gray-700/60 hover:cursor-pointer rounded-sm'>
+                                  <div className=' absolute top-2 right-4 w-[28px] h-[28px] flex items-center justify-center hover:bg-gray-300/90 dark:hover:bg-gray-700/60 hover:cursor-pointer rounded-sm' onClick={handleExitListOptions}>
                                     <svg className='w-[40%] opacity-75 fill-gray-600/90 dark:fill-white' version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 460.775 460.775" xmlSpace="preserve">
                                       <path d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55
                                         c-4.127,0-8.08,1.639-10.993,4.55l-171.138,171.14L59.25,4.565c-2.913-2.911-6.866-4.55-10.993-4.55
@@ -121,12 +134,12 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
                                 </div>
 
                                 <div className=' flex flex-col w-full'>
-                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center'>Add card...</div>
-                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center'>Copy list...</div>
+                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={() => {handleAddACardClick(), handleExitListOptions()}}>Add card...</div>
+                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={handleCopiedList}>Copy list...</div>
 
                                   <hr className="h-[1px] dark:bg-[#333C44] bg-gray-300/60 rounded-lg border-0 "></hr>
 
-                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center'>Delete this list</div>
+                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={deleteList}>Delete this list</div>
                                 </div>
 
                               </div>
