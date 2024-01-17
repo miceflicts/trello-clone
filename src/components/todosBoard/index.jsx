@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import TodosCard from '../todosCard'
 
 function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCreatingNewList, hasDeletedList, hasCopiedList}) {
@@ -6,6 +6,9 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
     const [isATodoBeingCreated, setIsATodoBeingCreated] = useState(false)
     const [newListTitle, setNewListTitle] = useState("")
     const [isClickingInListOptions, setIsClickingInListOptions] = useState(false)
+
+    const listOptionsRef = useRef();
+    const listConfigRef = useRef();
     
     const handleAddACardClick = () => {
         setTodosListDict([...todosListDict, { TodoText: "Text", IsBeingCreated: true, id: todosListDict.length}])
@@ -25,7 +28,7 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
     }
 
     const handleListOptionsClick = () => {
-      setIsClickingInListOptions(true);
+      setIsClickingInListOptions(!isClickingInListOptions);
     }
 
     const handleCreateNewTodo = (text) => {
@@ -55,10 +58,6 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
         setIsATodoBeingCreated(false);
     };
 
-    const handleExitListOptions = () => {
-      setIsClickingInListOptions(!isClickingInListOptions);
-    }
-
     const deleteList = () => {
       hasDeletedList(id);
     }
@@ -66,6 +65,28 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
     const handleCopiedList = () => {
       hasCopiedList(id)
     }
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        // Check if the current click is on the list options div
+        if (listOptionsRef.current && !listOptionsRef.current.contains(event.target)) {
+
+          // Check if the current click is in the three dots config button, if not set clicking in list options to its oposite
+          if (!(listConfigRef.current && listConfigRef.current.contains(event.target))) {
+            setIsClickingInListOptions(!isClickingInListOptions)
+          }
+        }
+      };
+
+      document.addEventListener("click", handleClickOutside);
+
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+      
+
+    }, [listOptionsRef, isClickingInListOptions])
+    
 
 
   return (
@@ -109,18 +130,17 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
                       <div className=' flex w-full justify-between m-1 ml-4 mr-4 break-words text-black/80 dark:text-[#B6C2CF] font-semibold gap-3 mb-2 '>
                           <h5 className=' text-[16px] break-words w-[200px] mt-[10px] ml-1'>{todoTitle}</h5>
 
-                          <div className=' w-[28px] h-[28px] flex items-center justify-center hover:bg-gray-300/90 dark:hover:bg-gray-700/60 hover:cursor-pointer rounded-md mt-[6px]' onClick={handleListOptionsClick}>
+                          <div className=' w-[28px] h-[28px] flex items-center justify-center hover:bg-gray-300/90 dark:hover:bg-gray-700/60 hover:cursor-pointer rounded-md mt-[6px]' onClick={handleListOptionsClick} ref={listConfigRef}>
                             <h5 className=' text-[20px] mb-2'>...</h5>
                           </div>
 
-                          {/* Todo, make this functional, make it change its position when the width of the screen changes */}
                           {isClickingInListOptions ? (
                             <>
-                              <div className=' absolute flex flex-col gap-5 w-[270px] h-[165px] border border-gray-200 dark:border-black/15 shadow-xl bg-white dark:bg-[#22272B] top-11 left-[232px] rounded-md z-50 items-center'>
+                              <div className=' absolute flex flex-col gap-5 w-[270px] h-[165px] border border-gray-200 dark:border-black/15 shadow-xl bg-white dark:bg-[#22272B] top-11 left-[232px] rounded-md z-50 items-center' ref={listOptionsRef}>
                                 <div className=' flex flex-row w-full justify-center'>
                                   <h5 className=' mt-2 dark:text-gray-300/85 text-gray-600/90'>Lista de ações</h5>
 
-                                  <div className=' absolute top-2 right-4 w-[28px] h-[28px] flex items-center justify-center hover:bg-gray-300/90 dark:hover:bg-gray-700/60 hover:cursor-pointer rounded-sm' onClick={handleExitListOptions}>
+                                  <div className=' absolute top-2 right-4 w-[28px] h-[28px] flex items-center justify-center hover:bg-gray-300/90 dark:hover:bg-gray-700/60 hover:cursor-pointer rounded-sm' onClick={handleListOptionsClick}>
                                     <svg className='w-[40%] opacity-75 fill-gray-600/90 dark:fill-white' version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 460.775 460.775" xmlSpace="preserve">
                                       <path d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55
                                         c-4.127,0-8.08,1.639-10.993,4.55l-171.138,171.14L59.25,4.565c-2.913-2.911-6.866-4.55-10.993-4.55
@@ -134,12 +154,12 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
                                 </div>
 
                                 <div className=' flex flex-col w-full'>
-                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={() => {handleAddACardClick(), handleExitListOptions()}}>Add card...</div>
-                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={handleCopiedList}>Copy list...</div>
+                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={() => {handleAddACardClick(), handleListOptionsClick()}}>Add card...</div>
+                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={() => {handleCopiedList(), handleListOptionsClick()}}>Copy list...</div>
 
                                   <hr className="h-[1px] dark:bg-[#333C44] bg-gray-300/60 rounded-lg border-0 "></hr>
 
-                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={deleteList}>Delete this list</div>
+                                  <div className=' flex flex-col dark:text-[#B6C2CF] text-sm font-[600] pl-5 w-full h-[35px] hover:bg-gray-500/20 dark:hover:bg-gray-700/30 justify-center cursor-pointer' onClick={() => {deleteList(), handleListOptionsClick()}}>Delete this list</div>
                                 </div>
 
                               </div>
