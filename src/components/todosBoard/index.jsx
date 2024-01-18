@@ -88,6 +88,26 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
 
     }, [listOptionsRef, isClickingInListOptions])
     
+    useEffect(() => {
+      if ( isBeingCreated ) {
+        const spaceKeyHandler = (event) => {
+
+          if (event.key === "Enter") {
+            event.preventDefault();
+            handleSubmitNewListClick();
+          }
+        }
+
+        document.addEventListener("keydown", spaceKeyHandler)
+        
+        return () => {
+          document.removeEventListener("keydown", spaceKeyHandler)
+        }
+      }
+    
+        
+    }, [isBeingCreated, newListTitle])
+    
 
 
   return (
@@ -103,6 +123,7 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
                       style={{ paddingLeft: '10px', paddingTop: "5px" }}
                       value={newListTitle}
                       onChange={handleListTitleChange}
+                      autoFocus
                     ></textarea>
                   </div>
                 </div>

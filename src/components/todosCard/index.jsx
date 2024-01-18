@@ -31,9 +31,29 @@ function TodosCard({index, text, isBeingCreated, hasCreatedNewTodo, hasDeletedAT
     return () => {
       document.removeEventListener("click", handleClickOutside);
     }
-  
 
   }, [beingCreatedRef])
+
+  useEffect(() => {
+
+      if ( isBeingCreated ) {
+        const spaceKeyHandler = (event) => {
+          
+          if (event.key === "Enter") {
+            event.preventDefault();
+            handleAddTodoButtonClick();
+          }
+        };
+    
+        document.addEventListener("keydown", spaceKeyHandler)
+    
+        return () => {
+          document.removeEventListener("keydown", spaceKeyHandler)
+        }  
+      }
+      
+  }, [isBeingCreated, newTodoText])
+  
   
 
   return (
@@ -42,7 +62,7 @@ function TodosCard({index, text, isBeingCreated, hasCreatedNewTodo, hasDeletedAT
       <div className=' w-[93%] flex flex-col gap-2' ref={beingCreatedRef}>
         <div className={` w-full h-[75px] bg-white dark:bg-[#22272B] rounded-lg flex`}>
             <div className=' ml-4 mt-2 w-full h-full '>
-                <textarea type="text" placeholder='Insira um título para esse cartão...' value={newTodoText} onChange={handleCreateTodoTextAreaChange} className='w-[95%] h-[70%] text-sm focus:border-teal-50 focus:outline-none focus:ring-0 resize-none dark:bg-[#22272B] dark:text-[#B6C2CF]'/>
+                <textarea type="text" placeholder='Insira um título para esse cartão...' value={newTodoText} onChange={handleCreateTodoTextAreaChange} className='w-[95%] h-[70%] text-sm focus:border-teal-50 focus:outline-none focus:ring-0 resize-none dark:bg-[#22272B] dark:text-[#B6C2CF]' autoFocus/>
             </div>
         </div>
 
