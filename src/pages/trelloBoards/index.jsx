@@ -36,11 +36,9 @@ function TrelloBoardsPage() {
 
   const handleCanceledCreatingNewList = (id) => {
     setTodosListDict((prevTodos) => prevTodos.filter(todo => todo.id !== id));
-    console.log(id)
   }
 
   const handleHasCopiedList = (id) => {
-    console.log("going")
 
       todosListDict.map(todo => {
         if (todo.id === id) {

@@ -1,7 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 
-function TodosCard({index, text, isBeingCreated, hasCreatedNewTodo, hasDeletedATodo}) {
+function TodosCard({index, text, isBeingCreated, hasCreatedNewTodo, hasDeletedATodo, addACardRef}) {
   const [newTodoText, setNewTodoText] = useState("")
+
+  const beingCreatedRef = useRef();
 
   const handleCreateTodoTextAreaChange = (event) => {
     setNewTodoText(event.target.value);
@@ -15,10 +17,29 @@ function TodosCard({index, text, isBeingCreated, hasCreatedNewTodo, hasDeletedAT
     hasDeletedATodo(index);
   }
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (beingCreatedRef.current && !beingCreatedRef.current.contains(event.target)) {
+        if (!(addACardRef.current && addACardRef.current.contains(event.target))) {
+          handleCancelCreateTodoClick();
+        }
+      }
+    }
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    }
+  
+
+  }, [beingCreatedRef])
+  
+
   return (
     <>
       {isBeingCreated ? (
-      <div className=' w-[93%] flex flex-col gap-2'>
+      <div className=' w-[93%] flex flex-col gap-2' ref={beingCreatedRef}>
         <div className={` w-full h-[75px] bg-white dark:bg-[#22272B] rounded-lg flex`}>
             <div className=' ml-4 mt-2 w-full h-full '>
                 <textarea type="text" placeholder='Insira um título para esse cartão...' value={newTodoText} onChange={handleCreateTodoTextAreaChange} className='w-[95%] h-[70%] text-sm focus:border-teal-50 focus:outline-none focus:ring-0 resize-none dark:bg-[#22272B] dark:text-[#B6C2CF]'/>

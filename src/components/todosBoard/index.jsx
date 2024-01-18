@@ -9,6 +9,7 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
 
     const listOptionsRef = useRef();
     const listConfigRef = useRef();
+    const addACardRef = useRef();
     
     const handleAddACardClick = () => {
         setTodosListDict([...todosListDict, { TodoText: "Text", IsBeingCreated: true, id: todosListDict.length}])
@@ -172,13 +173,13 @@ function TodosBoard({ id, todoTitle, isBeingCreated, createdNewList, canceledCre
                   {/* Cards */}
                   <div className='w-full flex flex-col items-center gap-[10px] mb-2'>
                       {todosListDict.map((todos, index) => (
-                          <TodosCard key={index} index={index} text={todos.TodoText} isBeingCreated={todos.IsBeingCreated} hasCreatedNewTodo={handleCreateNewTodo} hasDeletedATodo={handleHasDeletedAtodo}></TodosCard>
+                          <TodosCard key={index} index={index} text={todos.TodoText} isBeingCreated={todos.IsBeingCreated} hasCreatedNewTodo={handleCreateNewTodo} hasDeletedATodo={handleHasDeletedAtodo} addACardRef={addACardRef}></TodosCard>
                       ))}
                   </div>
 
 
                   {/* Add a card button */}
-                  <div className={` w-[93%] items-center mb-4 hover:bg-gray-500/20 dark:hover:bg-gray-700/30 rounded-md cursor-pointer ${isATodoBeingCreated ? "hidden" : "flex"}`} onClick={handleAddACardClick}>
+                  <div className={` w-[93%] items-center mb-4 hover:bg-gray-500/20 dark:hover:bg-gray-700/30 rounded-md cursor-pointer ${isATodoBeingCreated ? "hidden" : "flex"}`} onClick={handleAddACardClick} ref={addACardRef}>
                       <div className=' ml-[10px] flex gap-2 text-gray-500/95 font-semibold items-center'>
                           <h5 className=' text-[20px] mb-[2px]'>+</h5>
                           <h5 className=' text-[16px]'>Adicionar um cartão</h5>
